@@ -228,7 +228,10 @@ bool boolfunc::Resolution()
 }
 
 void boolfunc::MaxAbsorption()
-{   
+{
+    if(exp == "NONE")
+        return;
+    
     vector<int> zero(countvars,0);
     vector<bool> temp(inexp.size(),0);
     reverse(inexp.begin(),inexp.end());
