@@ -231,7 +231,7 @@ void boolfunc::MaxAbsorption()
 {
     if(exp == "NONE")
         return;
-    
+
     vector<int> zero(countvars,0);
     vector<bool> temp(inexp.size(),0);
     reverse(inexp.begin(),inexp.end());
@@ -302,11 +302,11 @@ void boolfunc::BlakeAlg(bool KNF0orDNF1)
         DNF();
     else
         KNF();
-    cout<<getExp()<<endl;
+    cout<<string(K0_D1?"DNF: ":"KNF: ")<<getExp()<<endl;
     MaxRes();
-    cout<<getExp()<<endl;
+    cout<<"Resolution: "<<getExp()<<endl;
     MaxAbsorption();
-    cout<<getExp()<<endl;
+    cout<<"Absorption: "<<getExp()<<endl;
 }
 
 string boolfunc::getExp()
