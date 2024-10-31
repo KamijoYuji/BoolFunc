@@ -164,6 +164,9 @@ void boolfunc::DNF()
 
 bool boolfunc::Resolution()
 {
+    if (K0_D1 == -1)
+        return 0;
+
     int x = inexp.size();
 
     for (int i = 0; i < x; i++) {
@@ -229,7 +232,7 @@ bool boolfunc::Resolution()
 
 void boolfunc::MaxAbsorption()
 {
-    if (exp == "NONE")
+    if (exp == "NONE" or K0_D1 == -1)
         return;
 
     vector<int> zero(countvars, 0);
@@ -341,8 +344,8 @@ void boolfunc::ZhegalkinPolynomial() {
     exp = "";
     for (int i = 0; i < s; i++) {
         if (alf[i]) {
-            if(!i)
-                exp+='1';
+            if (!i)
+                exp += '1';
             for (int j = 0; j < countvars; j++) {
                 if (getBit(i, countvars - j - 1)) {
                     exp += varnames[j];
@@ -356,4 +359,5 @@ void boolfunc::ZhegalkinPolynomial() {
         exp.pop_back();
         exp.pop_back();
     }
+    K0_D1 = -1;
 }
