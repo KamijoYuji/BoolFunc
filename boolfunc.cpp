@@ -1,11 +1,9 @@
-#include "boolfunc.h"
-
 boolfunc::boolfunc()
 {
     exp = "NONE";
     K0_D1 = -1;
-    inexp = vector<vector<int>>(2,vector<int>(1,0));
-    func = vector<bool>(2,0);
+    inexp = vector<vector<int>>(2, vector<int>(1, 0));
+    func = vector<bool>(2, 0);
     varnames.clear();
     varnames.push_back("x1");
     idF = 1;
@@ -15,15 +13,15 @@ boolfunc::boolfunc()
 
 boolfunc::boolfunc(int vars, bool id_T_F)
 {
-    func = vector<bool>(1<<vars,id_T_F);
+    func = vector<bool>(1 << vars, id_T_F);
     countvars = vars;
 
-    varnames = vector<string>(vars,"x");
-    for(int i = 1; i <= vars; i++)
-        varnames[i-1]+=to_string(i);
+    varnames = vector<string>(vars, "x");
+    for (int i = 1; i <= vars; i++)
+        varnames[i - 1] += to_string(i);
 
     exp = "NONE";
-    inexp = vector<vector<int>>(1<<vars,vector<int>(vars,0));
+    inexp = vector<vector<int>>(1 << vars, vector<int>(vars, 0));
 
     idF = !id_T_F;
     idT = id_T_F;
@@ -38,42 +36,42 @@ boolfunc::boolfunc(vector<bool> f)
     exp = "NONE";
     K0_D1 = -1;
 
-    if(!s or s == 1){
+    if (!s or s == 1) {
         boolfunc();
         return;
     }
 
     int counter = 1;
 
-    while(1<<counter < s)
+    while (1 << counter < s)
         counter++;
 
-    s = 1<<counter;
+    s = 1 << counter;
     countvars = counter;
 
     func.clear();
     idT = 1;
     idF = 0;
-    for(int i = 0; i < s; i++){
+    for (int i = 0; i < s; i++) {
         func.push_back(f[i]);
         idT *= f[i];
         idF += f[i];
     }
     idF = !idF;
 
-    varnames = vector<string>(counter,"x");
-    for(int i = 1; i <= counter; i++)
-        varnames[i-1]+=to_string(i);
+    varnames = vector<string>(counter, "x");
+    for (int i = 1; i <= counter; i++)
+        varnames[i - 1] += to_string(i);
 
-    inexp = vector<vector<int>>(s,vector<int>(counter,0));
+    inexp = vector<vector<int>>(s, vector<int>(counter, 0));
 }
 
-bool boolfunc::getBit(int val, int n){
+bool boolfunc::getBit(int val, int n) {
     bool q;
     n++;
-    while(n){
-        q = (((val>>1)<<1)!=val);
-        val = val>>1;
+    while (n) {
+        q = (((val >> 1) << 1) != val);
+        val = val >> 1;
         n--;
     }
     return q;
@@ -81,38 +79,39 @@ bool boolfunc::getBit(int val, int n){
 
 void boolfunc::KNF()
 {
-    if(idT){
+    if (idT) {
         exp = "NONE";
-        inexp = vector<vector<int>>(1<<countvars,vector<int>(countvars,0));
+        inexp = vector<vector<int>>(1 << countvars, vector<int>(countvars, 0));
         return;
     }
     K0_D1 = 0;
     string e = "";
 
-    int size = 1<<countvars;
+    int size = 1 << countvars;
 
-    for(int i = 0; i < size; i++){
-        if(!func[i]){
+    for (int i = 0; i < size; i++) {
+        if (!func[i]) {
             string ine = "(";
-            for(int j = 0; j < countvars; j++){
-                inexp[i][j] = j+1;
-                if(getBit(i,countvars-j-1)){
-                    ine+='!';
+            for (int j = 0; j < countvars; j++) {
+                inexp[i][j] = j + 1;
+                if (getBit(i, countvars - j - 1)) {
+                    ine += '!';
                     inexp[i][j] *= -1;
                 }
-                ine+=varnames[j];
-                if(j+1 != countvars)
-                    ine+=" v ";
+                ine += varnames[j];
+                if (j + 1 != countvars)
+                    ine += " v ";
             }
-            ine+=')';
-            e+=ine;
-            e+=" ^ ";
-        } else {
-            inexp[i] = vector<int>(countvars,0);
+            ine += ')';
+            e += ine;
+            e += " ^ ";
+        }
+        else {
+            inexp[i] = vector<int>(countvars, 0);
         }
     }
 
-    if(e[e.size()-2] == '^'){
+    if (e[e.size() - 2] == '^') {
         e.pop_back();
         e.pop_back();
     }
@@ -122,39 +121,40 @@ void boolfunc::KNF()
 
 void boolfunc::DNF()
 {
-    if(idF){
+    if (idF) {
         exp = "NONE";
-        inexp = vector<vector<int>>(1<<countvars,vector<int>(countvars,0));
+        inexp = vector<vector<int>>(1 << countvars, vector<int>(countvars, 0));
         return;
     }
 
     K0_D1 = 1;
     string e = "";
 
-    int size = 1<<countvars;
+    int size = 1 << countvars;
 
-    for(int i = 0; i < size; i++){
-        if(func[i]){
+    for (int i = 0; i < size; i++) {
+        if (func[i]) {
             string ine = "(";
-            for(int j = 0; j < countvars; j++){
-                inexp[i][j] = j+1;
-                if(!getBit(i,countvars-j-1)){
-                    ine+='!';
+            for (int j = 0; j < countvars; j++) {
+                inexp[i][j] = j + 1;
+                if (!getBit(i, countvars - j - 1)) {
+                    ine += '!';
                     inexp[i][j] *= -1;
                 }
-                ine+=varnames[j];
-                if(j+1 != countvars)
-                    ine+=" ^ ";
+                ine += varnames[j];
+                if (j + 1 != countvars)
+                    ine += " ^ ";
             }
-            ine+=')';
-            e+=ine;
-            e+=" v ";
-        } else {
-            inexp[i] = vector<int>(countvars,0);
+            ine += ')';
+            e += ine;
+            e += " v ";
+        }
+        else {
+            inexp[i] = vector<int>(countvars, 0);
         }
     }
 
-    if(e[e.size()-2] == 'v'){
+    if (e[e.size() - 2] == 'v') {
         e.pop_back();
         e.pop_back();
     }
@@ -166,58 +166,58 @@ bool boolfunc::Resolution()
 {
     int x = inexp.size();
 
-    for(int i = 0; i < x; i++){
-        for(int j = 0; j < x; j++){
+    for (int i = 0; i < x; i++) {
+        for (int j = 0; j < x; j++) {
             int c = 0;
-            for(int val = 0; val < countvars; val++){
-                if(!(inexp[i][val]+inexp[j][val]) and inexp[i][val] and i != j)
+            for (int val = 0; val < countvars; val++) {
+                if (!(inexp[i][val] + inexp[j][val]) and inexp[i][val] and i != j)
                     c++;
             }
 
-            if(c == 1){
+            if (c == 1) {
                 vector<int> R;
 
-                for(int val = 0; val < countvars; val++)
-                    R.push_back(!inexp[i][val] or !inexp[j][val]?!inexp[i][val]?inexp[j][val]:inexp[i][val]:(inexp[i][val]+inexp[j][val])/2);
+                for (int val = 0; val < countvars; val++)
+                    R.push_back(!inexp[i][val] or !inexp[j][val] ? !inexp[i][val] ? inexp[j][val] : inexp[i][val] : (inexp[i][val] + inexp[j][val]) / 2);
 
                 bool flag = 1;
 
-                for(int pr = 0; pr < x; pr++)
+                for (int pr = 0; pr < x; pr++)
                     flag *= R != inexp[pr];
 
-                if(flag){
+                if (flag) {
                     string e = "";
 
-                    if(K0_D1)
-                        e+=" v (";
+                    if (K0_D1)
+                        e += " v (";
                     else
-                        e+=" ^ (";
+                        e += " ^ (";
 
                     int sum = 0;
 
-                    for(int val = 0; val < countvars; val++)
-                        sum+=(R[val]!=0);
+                    for (int val = 0; val < countvars; val++)
+                        sum += (R[val] != 0);
 
                     sum--;
 
-                    for(int val = 0; val < countvars; val++){
-                        if(R[val]){
-                            if(R[val]!=abs(R[val]))
-                                e+='!';
-                            e+=varnames[val];
-                            if(sum){
-                                if(K0_D1)
-                                    e+=" ^ ";
+                    for (int val = 0; val < countvars; val++) {
+                        if (R[val]) {
+                            if (R[val] != abs(R[val]))
+                                e += '!';
+                            e += varnames[val];
+                            if (sum) {
+                                if (K0_D1)
+                                    e += " ^ ";
                                 else
-                                    e+=" v ";
+                                    e += " v ";
                                 sum--;
                             }
                         }
                     }
 
-                    e+=")";
+                    e += ")";
 
-                    exp+=e;
+                    exp += e;
                     inexp.push_back(R);
                     return 1;
                 }
@@ -229,61 +229,61 @@ bool boolfunc::Resolution()
 
 void boolfunc::MaxAbsorption()
 {
-    if(exp == "NONE")
+    if (exp == "NONE")
         return;
 
-    vector<int> zero(countvars,0);
-    vector<bool> temp(inexp.size(),0);
-    reverse(inexp.begin(),inexp.end());
+    vector<int> zero(countvars, 0);
+    vector<bool> temp(inexp.size(), 0);
+    reverse(inexp.begin(), inexp.end());
 
     int x = inexp.size();
 
-    for(int i = 0; i < x-1; i++){
-        for(int j = i+1; j < x; j++){
+    for (int i = 0; i < x - 1; i++) {
+        for (int j = i + 1; j < x; j++) {
             int sum = 0;
             int countnotnull = 0;
-            for(int val = 0; val < countvars; val++)
+            for (int val = 0; val < countvars; val++)
             {
-                countnotnull+=(inexp[i][val])?1:0;
-                sum+=(inexp[i][val])?(abs(inexp[i][val]-inexp[j][val])):0;
+                countnotnull += (inexp[i][val]) ? 1 : 0;
+                sum += (inexp[i][val]) ? (abs(inexp[i][val] - inexp[j][val])) : 0;
             }
-            temp[j] = temp[j]+(!sum and countnotnull);
+            temp[j] = temp[j] + (!sum and countnotnull);
         }
     }
 
-    for(int i = 0; i < x; i++)
-        if(temp[i])
+    for (int i = 0; i < x; i++)
+        if (temp[i])
             inexp[i] = zero;
 
     x = inexp.size();
 
     exp = "";
-    for(int i = 0; i < x; i++){
+    for (int i = 0; i < x; i++) {
         string e = "(";
         int count = 0;
-        for(int j = 0; j < countvars; j++)
-            count+=!!inexp[i][j];
-        for(int j = 0; j < countvars; j++){
-            if(inexp[i][j])
+        for (int j = 0; j < countvars; j++)
+            count += !!inexp[i][j];
+        for (int j = 0; j < countvars; j++) {
+            if (inexp[i][j])
             {
-                if(inexp[i][j] < 0)
-                    e+='!';
-                e+=varnames[j];
-                if(count-1)
+                if (inexp[i][j] < 0)
+                    e += '!';
+                e += varnames[j];
+                if (count - 1)
                 {
-                    e+=K0_D1?" ^ ":" v ";
+                    e += K0_D1 ? " ^ " : " v ";
                     count--;
                 }
             }
         }
-        e+=')';
-        if(e.size()>2){
+        e += ')';
+        if (e.size() > 2) {
             exp += e;
-            exp += K0_D1?" v ":" ^ ";
+            exp += K0_D1 ? " v " : " ^ ";
         }
     }
 
-    if(exp[exp.size()-2] == 'v' or exp[exp.size()-2] == '^'){
+    if (exp[exp.size() - 2] == 'v' or exp[exp.size() - 2] == '^') {
         exp.pop_back();
         exp.pop_back();
     }
@@ -298,15 +298,12 @@ void boolfunc::MaxRes()
 void boolfunc::BlakeAlg(bool KNF0orDNF1)
 {
     K0_D1 = KNF0orDNF1;
-    if(K0_D1)
+    if (K0_D1)
         DNF();
     else
         KNF();
-    cout<<string(K0_D1?"DNF: ":"KNF: ")<<getExp()<<endl;
     MaxRes();
-    cout<<"Resolution: "<<getExp()<<endl;
     MaxAbsorption();
-    cout<<"Absorption: "<<getExp()<<endl;
 }
 
 string boolfunc::getExp()
@@ -317,12 +314,45 @@ string boolfunc::getExp()
 void boolfunc::printINEXP()
 {
     int s = inexp.size();
-    for(int i = 0; i < s; i++){
-        for(int j = 0; j < countvars; j++){
-            cout<<inexp[i][j]<<"\t";
+    for (int i = 0; i < s; i++) {
+        for (int j = 0; j < countvars; j++) {
+            cout << inexp[i][j] << "\t";
         }
-        cout<<endl;
+        cout << endl;
     }
-    cout<<endl;
+    cout << endl;
 }
 
+void boolfunc::ZhegalkinPolynomial() {
+    int s = func.size();
+    vector<bool> temp = func;
+    vector<bool> alf;
+    alf.push_back(temp[0]);
+    while (s-1) {
+        vector<bool> sect;
+        for (int i = 0; i < s-1; i++) {
+            sect.push_back(temp[i] ^ temp[i + 1]);
+        }
+        temp = sect;
+        s--;
+        alf.push_back(temp[0]);
+    }
+    alf.push_back(0);
+    s = alf.size();
+    exp = "";
+    for (int i = 0; i < s; i++) {
+        if (alf[i]) {
+            for (int j = 0; j < countvars; j++) {
+                if (getBit(i, countvars - j - 1)) {
+                    exp += varnames[j];
+                }
+            }
+            exp += " + ";
+        }
+    }
+    if (exp[exp.size() - 2] == '+')
+    {
+        exp.pop_back();
+        exp.pop_back();
+    }
+}
