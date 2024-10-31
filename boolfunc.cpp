@@ -342,6 +342,8 @@ void boolfunc::ZhegalkinPolynomial() {
     exp = "";
     for (int i = 0; i < s; i++) {
         if (alf[i]) {
+            if(!i)
+                exp+='1';
             for (int j = 0; j < countvars; j++) {
                 if (getBit(i, countvars - j - 1)) {
                     exp += varnames[j];
