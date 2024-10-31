@@ -337,7 +337,6 @@ void boolfunc::ZhegalkinPolynomial() {
         s--;
         alf.push_back(temp[0]);
     }
-    alf.push_back(0);
     s = alf.size();
     exp = "";
     for (int i = 0; i < s; i++) {
