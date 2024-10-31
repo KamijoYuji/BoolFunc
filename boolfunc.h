@@ -1,8 +1,8 @@
-#ifndef BOOLFUNC_H
-#define BOOLFUNC_H
 #include<vector>
 #include<iostream>
 #include<algorithm>
+#include<string>
+
 
 using namespace std;
 
@@ -37,9 +37,9 @@ public:
 
     void MaxRes(); //максимально возможная резолюция
 
-    void BlakeAlg(bool K0_D1_); //алгоритм Блейка
+    void BlakeAlg(bool KNF0orDNF1); //алгоритм Блейка
+
+    void ZhegalkinPolynomial(); //многочлен Жегалкина
 
     string getExp(); //возвращает выражение
 };
-
-#endif // BOOLFUNC_H
