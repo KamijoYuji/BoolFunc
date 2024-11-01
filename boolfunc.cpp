@@ -360,4 +360,7 @@ void boolfunc::ZhegalkinPolynomial() {
         exp.pop_back();
     }
     K0_D1 = -1;
+
+    if(exp.empty())
+        exp = "0";
 }
