@@ -13,6 +13,18 @@ boolfunc::boolfunc()
 
 boolfunc::boolfunc(int vars, bool id_T_F)
 {
+    if(!vars){
+        exp = "NONE";
+        K0_D1 = -1;
+        inexp = vector<vector<int>>(2, vector<int>(1, 0));
+        func = vector<bool>(2, 0);
+        varnames.clear();
+        varnames.push_back("x1");
+        idF = 1;
+        idT = 0;
+        countvars = 1;
+        return;
+    }
     func = vector<bool>(1 << vars, id_T_F);
     countvars = vars;
 
@@ -37,7 +49,13 @@ boolfunc::boolfunc(vector<bool> f)
     K0_D1 = -1;
 
     if (!s or s == 1) {
-        boolfunc();
+        inexp = vector<vector<int>>(2, vector<int>(1, 0));
+        func = vector<bool>(2, 0);
+        varnames.clear();
+        varnames.push_back("x1");
+        idF = 1;
+        idT = 0;
+        countvars = 1;
         return;
     }
 
@@ -327,6 +345,10 @@ void boolfunc::printINEXP()
 }
 
 void boolfunc::ZhegalkinPolynomial() {
+    if(idF){
+        exp = "0";
+        return;
+    }
     int s = func.size();
     vector<bool> temp = func;
     vector<bool> alf;
@@ -360,7 +382,4 @@ void boolfunc::ZhegalkinPolynomial() {
         exp.pop_back();
     }
     K0_D1 = -1;
-
-    if(exp.empty())
-        exp = "0";
 }
