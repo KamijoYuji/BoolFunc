@@ -1,5 +1,6 @@
 #include <iostream>
 
+using namespace std;
 int main() {
     boolfunc a = boolfunc(vector<bool>{0,0,0,1,1,1,1,0});
     a.ZhegalkinPolynomial();
